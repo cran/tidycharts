@@ -2,7 +2,7 @@
 % Please edit documentation in R/bar_chart_waterfall.R
 \name{bar_chart_waterfall}
 \alias{bar_chart_waterfall}
-\title{Generate horizontal waterfall chart}
+\title{Generate horizontal waterfall chart.}
 \usage{
 bar_chart_waterfall(
   cat,
@@ -24,10 +24,10 @@ bar_chart_waterfall(
 \item{result_title}{the title for the result bar. Ignored if add_result is false}
 }
 \value{
-SVG string containing chart
+object of class tidychart with a character vector containing SVG elements
 }
 \description{
-Generate horizontal waterfall chart
+Generate horizontal waterfall chart.
 }
 \examples{
 df <- data.frame(
@@ -35,5 +35,5 @@ df <- data.frame(
   profit = sin(1:7)
 )
 
-bar_chart_waterfall(cat = 'city', series = 'profit', data = df) \%>\% SVGrenderer()
+bar_chart_waterfall(cat = 'city', series = 'profit', data = df)
 }

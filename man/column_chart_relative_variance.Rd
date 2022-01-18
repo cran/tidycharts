@@ -2,7 +2,7 @@
 % Please edit documentation in R/column_chart_functions.R
 \name{column_chart_relative_variance}
 \alias{column_chart_relative_variance}
-\title{Generate column chart with relative variance (in percents)}
+\title{Generate column chart with relative variance (in percents).}
 \usage{
 column_chart_relative_variance(
   x,
@@ -23,28 +23,27 @@ column_chart_relative_variance(
 
 \item{real}{vector containing values that will be compared to baseline  or name of column in data with that values}
 
-\item{colors}{1 if green color represents positive values having good buisness impact and red negative values having bad impact or 2 if otherwise}
+\item{colors}{1 if green color represents positive values having good business impact and red negative values having bad impact or 2 if otherwise}
 
 \item{data}{data frame with columns containing data for x, baseline or real series}
 
 \item{x_title}{the title of the plot}
 
-\item{x_style}{style of the x axis to indicate baseline scenario. The default is 'prevoius'.}
+\item{x_style}{style of the x axis to indicate baseline scenario. The default is 'previous'.}
 
 \item{styles}{optional vector with styles of the pin heads}
 
 \item{interval}{intervals on x axis. The width of the bars depends on this parameter}
 }
 \value{
-SVG string containing chart
+object of class tidychart with a character vector containing SVG elements
 }
 \description{
-Generate column chart with relative variance (in percents)
+Generate column chart with relative variance (in percents).
 }
 \examples{
 x <- month.abb
 baseline <- rnorm(12, mean = 1, sd = 0.2)
 real <- c(rnorm(6, mean = 0.8, sd = 0.2), rnorm(6, mean = 1.2, sd = 0.2))
-column_chart_relative_variance(x, baseline, real, x_title = 'profit \%') \%>\%
-  SVGrenderer()
+column_chart_relative_variance(x, baseline, real, x_title = 'profit \%')
 }

@@ -1,4 +1,19 @@
 
+#' Function to render SVG as bitmap, used only in tests
+#'
+#' @param svg_string string containing SVG statements
+#'
+#' @return No return value, called for side effects
+#'
+#' @examples
+#' if(FALSE){
+#'
+#'   df <- data.frame(x = c(1,2,3), y = c(4,5,6))
+#'
+#'   column_chart(df, x = df$x, series = c("y")) %>% show()
+#' }
+#'
+#' @importFrom rsvg rsvg
 show <- function(svg_string) {
   magick::image_read_svg(svg_string, width = 500)
 }
@@ -12,9 +27,9 @@ initialize <-
            height = 500,
            x_vector = NULL,
            bar_width = NULL,
-           x_margin = 130,
+           x_margin = get_margins()$left + 50,
            y_vector = NULL,
-           y_margin = 50) {
+           y_margin = get_margins()$top + 50) {
     if (!is.null(x_vector) & !is.null(bar_width)) {
       width <- length(x_vector) * 1.5 * bar_width + x_margin
     }
@@ -53,15 +68,15 @@ finalize <- function(svg_string) {
 }
 
 
-#' Add IBCS complient legend
+#' Add IBCS compliant legend.
 #'
 #' @param svg_string one element character vector containing SVG graphic statements. Legend will be added to this plot.
 #' @param line1 first line of title. Element(s) of the structure dimension represent the object of the report, typically a legal entity, an organization unit, or a line of business
-#' @param line2_measure First part of second line of the title. It wil be in bold text. It should represent buisness measure being analyzed.
+#' @param line2_measure First part of second line of the title. It will be in bold text. It should represent business measure being analyzed.
 #' @param line2_rest Second part of second line of the title. It should represent units of measure.
 #' @param line3 Third line of the title, it should indicate time, scenarios, variances, etc
 #'
-#' @return one element character vector containing SVG graphic statements. svg_string with appended legend.
+#' @inherit bar_chart return
 #' @export
 #'
 #' @examples
@@ -70,18 +85,18 @@ finalize <- function(svg_string) {
 #'   add_title(line1 = 'Department of Big Computers',
 #'     line2_measure = "Sales",
 #'     line2_rest = "in mEUR",
-#'     line3 = "2010..2015") %>%
-#'   SVGrenderer()
+#'     line3 = "2010..2015")
 #'
 add_title <- function(svg_string, line1, line2_measure, line2_rest, line3=""){
   size = get_svg_size(svg_string)
-  initialize(svg_string_append = svg_string, width = size[1], height = size[2]) %>%
+  svg_string <- initialize(svg_string_append = svg_string, width = size[1], height = size[2]) %>%
     draw_text(text = line1, x = 0, y = 12, text_anchor = "start") %>%
     draw_text(text = line2_measure, x = 0, y = 24, text_anchor = "start", text_weight = "bold") %>%
     draw_text(text = line2_rest, x = str_width(line2_measure, bold = T)+2, y = 24, text_anchor = "start") %>%
     draw_text(text = line3, x = 0, y = 36, text_anchor = "start") %>%
-    finalize() %>%
-    return()
+    finalize()
+  class(svg_string) <- c('tidychart', 'character')
+  return(svg_string)
 }
 
 get_svg_size <- function(svg_string){
@@ -91,7 +106,7 @@ get_svg_size <- function(svg_string){
   return(size)
 }
 
-#' Save svg image
+#' Save svg image.
 #'
 #' @param svg_string string containing SVG statements
 #' @param path path to file where image will be saved
@@ -101,4 +116,15 @@ get_svg_size <- function(svg_string){
 #'
 SVGsave <- function(svg_string, path){
   write(svg_string, path)
+}
+
+
+# https://www.r-bloggers.com/2016/07/round-values-while-preserve-their-rounded-sum-in-r/
+round_preserve_sum <- function(x, digits = 0) {
+  up <- 10 ^ digits
+  x <- x * up
+  y <- floor(x)
+  indices <- utils::tail(order(x-y), round(sum(x)) - sum(y))
+  y[indices] <- y[indices] + 1
+  y / up
 }

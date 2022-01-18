@@ -9,16 +9,16 @@ scatter_plot(
   x,
   y,
   cat = NULL,
-  x_space_size = (x_end - x_start)/8,
-  y_space_size = (y_end - y_start)/8,
+  x_space_size = NULL,
+  y_space_size = NULL,
   x_names = c("x", ""),
   y_names = c("y", ""),
   legend_title = "Legend",
   bubble_value = NULL,
   x_start = 0,
-  x_end = max(x),
+  x_end = max(get_vector(data, x)),
   y_start = 0,
-  y_end = max(y)
+  y_end = max(get_vector(data, y))
 )
 }
 \arguments{
@@ -53,7 +53,7 @@ scatter_plot(
 \item{y_end}{numeric value defining where the y axis should end at. Set by default to max(y).}
 }
 \value{
-SVG string containing chart
+object of class tidychart with a character vector containing SVG elements
 }
 \description{
 Generates a scatter plot. If additional argument added, a bubble plot is generated.
@@ -93,7 +93,7 @@ bubble <-scatter_plot(
   bubble_value = data$bubble)
 
 # show the plots
-scatter \%>\% SVGrenderer()
-bubble \%>\% SVGrenderer()
+scatter
+bubble
 
 }

@@ -5,8 +5,12 @@
 
 <!-- badges: start -->
 
+[![R-CMD-check](https://github.com/MI2DataLab/tidycharts/workflows/R-CMD-check/badge.svg)](https://github.com/MI2DataLab/tidycharts/actions)
+[![CRAN monthly
+downloads](https://cranlogs.r-pkg.org/badges/tidycharts)](https://cran.r-project.org/package=tidycharts)
+[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/tidycharts)](https://cran.r-project.org/package=tidycharts)
 [![Codecov test
-coverage](https://codecov.io/gh/SawickiBartosz/tidycharts/branch/main/graph/badge.svg)](https://codecov.io/gh/SawickiBartosz/tidycharts?branch=main)
+coverage](https://codecov.io/gh/SawickiBartosz/tidycharts/branch/main/graph/badge.svg)](https://app.codecov.io/gh/SawickiBartosz/tidycharts?branch=main)
 <!-- badges: end -->
 
 The goal of tidycharts is to enable R users to create charts inspired by
@@ -16,16 +20,15 @@ so embedding them in HTML documents is straight forward.
 
 ## Installation
 
-~~You can install the released version of tidycharts from
-[CRAN](https://CRAN.R-project.org) with:~~ The package is going to be
-deployed to CRAN, so that the installation process will look like:
+You can install the released version of tidycharts from
+[CRAN](https://CRAN.R-project.org) with:
 
 ``` r
 install.packages("tidycharts")
 ```
 
-But for now only development version from [GitHub](https://github.com/)
-can be installed with:
+Development version from [GitHub](https://github.com/) can be installed
+with:
 
 ``` r
 devtools::install_github("MI2DataLab/tidycharts")
@@ -43,16 +46,15 @@ df <- data.frame(months = month.abb[1:6],
                  values = round(5 + sin(1:6), 2))
 
 # create chart in a form of character vector containing SVG content
-column_chart(df, x = 'months', series = 'values') %>%
-  SVGrenderer() # render and show the SVG 
+column_chart(df, x = 'months', series = 'values')
 ```
 
-![column chart](man/figures/readme-column.png) You can easily create
-other type of plots, ie. lineplots:
+<img src="man/figures/readme-column.png" width="50%" />
+
+You can easily create other type of plots, ie. lineplots:
 
 ``` r
-line_chart_markers(df, x = df$months, series = 'values', series_labels = 'values') %>% 
-  SVGrenderer()
+line_chart_markers(df, x = df$months, series = 'values', series_labels = 'values')
 ```
 
-![line chart](man/figures/readme-lines.png)
+<img src="man/figures/readme-lines.png" width="50%" />

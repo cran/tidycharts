@@ -170,14 +170,14 @@ add_result_bar <- function(svg_string,
   return(svg_string)
 }
 
-#' Generate horizontal waterfall chart
+#' Generate horizontal waterfall chart.
 #'
 #' @param add_result boolean value if result bar should be plotted
 #' @param result_title the title for the result bar. Ignored if add_result is false
 #'
 #' @inheritParams bar_chart
 #'
-#' @return SVG string containing chart
+#' @inherit bar_chart return
 #' @export
 #'
 #' @examples
@@ -186,7 +186,7 @@ add_result_bar <- function(svg_string,
 #'   profit = sin(1:7)
 #' )
 #'
-#' bar_chart_waterfall(cat = 'city', series = 'profit', data = df) %>% SVGrenderer()
+#' bar_chart_waterfall(cat = 'city', series = 'profit', data = df)
 bar_chart_waterfall <-
   function(cat,
            series,
@@ -206,7 +206,7 @@ bar_chart_waterfall <-
     } else{
       labels <- cat
     }
-    initialize(y_vector = labels,
+    svg_string <- initialize(y_vector = labels,
                bar_width = 16) %>%
       add_horiz_waterfall_bars(cat, series) %>%
       {
@@ -215,4 +215,6 @@ bar_chart_waterfall <-
                .)
       } %>%
       finalize()
+    class(svg_string) <- c('tidychart', 'character')
+    return(svg_string)
   }

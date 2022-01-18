@@ -21,6 +21,51 @@ pkg.env$widths <- data.frame(
 
 rownames(pkg.env$widths) <- pkg.env$widths$interval
 
+#' Reset margin values to package defaults.
+#'
+#' @inherit set_margins return
+#' @export
+#'
+#' @examples
+#' reset_margins()
+reset_margins <- function(){
+  pkg.env$margins <- list(
+    top = 75,
+    left = 80
+  )
+}
+# define default margins
+reset_margins()
+
+get_margins <- function(){
+  return(pkg.env$margins)
+}
+
+#' Set margins size.
+#'
+#' Currently supported is setting 'top' and 'left' margins. Names of elements in x and keys in ... should be 'top' or 'left'.
+#'
+#' @param x A named list with numeric margin values. Default set to NULL.
+#' @param ... Key - value pairs, where key is the name of margin and value is a numeric value of a margin.
+#'
+#' @return No return value, called for side effects.
+#' @export
+#'
+#' @examples
+#' set_margins(list(top = 75, left = 80))
+#'
+#' set_margins(top = 75, left = 80)
+set_margins <- function(x = NULL, ...){
+  x = append(list(...), x)
+  if (!all(names(x) %in% names(pkg.env$margins))) {
+    stop(paste('Wrong names in given list! Should be', paste(names(pkg.env$margins), collapse = ' '), '!'))
+  }
+  if (!all(sapply(x, is.numeric))) {
+    stop('Only numeric margin values can be set')
+  }
+  pkg.env$margins[names(x)] <- x
+}
+
 pkg.env$colors_df <- cbind(
   bar_colors =  c(
     "rgb(64,64,64)",
@@ -63,7 +108,7 @@ get_scatter_colors <- function(series_number, scatter_colors = pkg.env$scatter_c
 #'
 #' @return list with bar_color and text_color
 #'
-get_gray_color_stacked <- function(series_number, colors_df = pkg.env$colors_df){
+get_color_stacked <- function(series_number, colors_df = pkg.env$colors_df){
 
   stopifnot(series_number %in% 1:6)
   return(list(bar_color = colors_df[series_number,][['bar_colors']],
@@ -80,13 +125,13 @@ get_interval_width <- function(interval){
 
 
 
-#' Change default colors of the package
+#' Change default colors of the package.
 #'
 #' Customize your plots and change default color palette.
 #'
 #' @param colors_df data frame with 6 rows and 2 columns. Columns must nave names : "text_colors", "bar_colors". In cells there should be rgb values of chosen colors in format: "rgb(x,y,z)". Rows represent subsequent colors on stacked plots.
 #'
-#' @return No return value, called for side effects
+#' @return No return value, called for side effects.
 #' @export
 #'
 #' @examples
@@ -109,14 +154,39 @@ set_colors <- function(colors_df){
   pkg.env$colors_df <- colors_df
 }
 
+#' Change default colors of the scatter plots from the package.
+#'
+#' Customize your scatter plots and change default color palette.
+#'
+#' @param new_scatter_colors vector of the length of 6 containing rgb values of chosen colors in format: "rgb(x,y,z)"
+#'
+#' @return No return value, called for side effects.
+#' @export
+#'
+#' @examples
+#' mi2lab_scatter_colors <- c(
+#'    "rgb(68, 19, 71)",
+#'    "rgb(243, 46, 255)",
+#'    "rgb(106, 0, 112)",
+#'    "rgb(217, 43, 227)" ,
+#'    "rgb(114, 49, 117)",
+#'    "rgb(249, 110, 255)"
+#'  )
+#'
+#' set_scatter_colors(mi2lab_scatter_colors)
+#'
+set_scatter_colors <- function(new_scatter_colors){
+  #stopifnot(length(new_scatter_colors == 6))
+  pkg.env$scatter_colors <- new_scatter_colors
+}
 
 
 
-#' Change default styles for plots
+#' Change default styles for plots.
 #'
 #' @param styles_df data frame with columns 'fill' and 'stroke'. Rows represent subsequent styles which names can be passed to plotting functions, usually as styles argument.
 #'
-#' @return No return value, called for side effects
+#' @return No return value, called for side effects.
 #' @export
 #'
 #' @examples
@@ -138,9 +208,9 @@ set_styles <- function(styles_df){
   pkg.env$styles_df <-styles_df
 }
 
-#' Restore default color and style settings
+#' Restore default color and style settings.
 #'
-#' @return No return value, called for side effects
+#' @return No return value, called for side effects.
 #' @export
 #'
 #' @examples

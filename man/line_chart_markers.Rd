@@ -16,7 +16,7 @@ line_chart_markers(
 \arguments{
 \item{data}{data frame containing data to be plotted}
 
-\item{x}{vector cointaining time interwals of the values}
+\item{x}{vector containing time intervals of the values}
 
 \item{series}{vector containing names of columns in data with values to plot}
 
@@ -27,7 +27,7 @@ line_chart_markers(
 \item{styles}{optional data frame with style names. Styles of the markers will be plotted accordingly.}
 }
 \value{
-SVG string containing chart
+object of class tidychart with a character vector containing SVG elements
 }
 \description{
 Generates line plot with markers on every value.
@@ -50,7 +50,6 @@ styles <- data.frame(
 line_chart <- line_chart_markers(data, data$time, c("PL", "AC"), c("PL", "AC"),"months", styles)
 
 #show the plot
-line_chart \%>\% SVGrenderer()
-
+line_chart
 
 }

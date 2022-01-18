@@ -2,7 +2,7 @@
 % Please edit documentation in R/join_charts.R
 \name{join_charts}
 \alias{join_charts}
-\title{Join SVG charts This function first populates each place in the first row, then columns in the second row}
+\title{Join SVG charts.}
 \usage{
 join_charts(
   ...,
@@ -12,7 +12,7 @@ join_charts(
 )
 }
 \arguments{
-\item{...}{mumltiple character vectors with SVG content}
+\item{...}{multiple character vectors with SVG content}
 
 \item{nrows}{number of rows of plots in joint plot, default is set to number of plots}
 
@@ -21,10 +21,10 @@ join_charts(
 \item{list_of_plots}{optional list of plots to join. Use exclusively ... params or list_of_plots. Names of list entries will be plotted as titles of the plots}
 }
 \value{
-Character vector with SVG content
+object of class tidychart with a character vector containing SVG elements
 }
 \description{
-Join SVG charts This function first populates each place in the first row, then columns in the second row
+This function first populates each place in the first row, then columns in the second row.
 }
 \examples{
   df <- data.frame(
@@ -35,5 +35,5 @@ Join SVG charts This function first populates each place in the first row, then 
 join_charts(
   column_chart(df, x = 'mon', series = 'values'),
   column_chart(df, x = 'mon', series = 'values')
-) \%>\% SVGrenderer()
+)
 }

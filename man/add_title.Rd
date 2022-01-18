@@ -2,7 +2,7 @@
 % Please edit documentation in R/chart_utils.R
 \name{add_title}
 \alias{add_title}
-\title{Add IBCS complient legend}
+\title{Add IBCS compliant legend.}
 \usage{
 add_title(svg_string, line1, line2_measure, line2_rest, line3 = "")
 }
@@ -11,17 +11,17 @@ add_title(svg_string, line1, line2_measure, line2_rest, line3 = "")
 
 \item{line1}{first line of title. Element(s) of the structure dimension represent the object of the report, typically a legal entity, an organization unit, or a line of business}
 
-\item{line2_measure}{First part of second line of the title. It wil be in bold text. It should represent buisness measure being analyzed.}
+\item{line2_measure}{First part of second line of the title. It will be in bold text. It should represent business measure being analyzed.}
 
 \item{line2_rest}{Second part of second line of the title. It should represent units of measure.}
 
 \item{line3}{Third line of the title, it should indicate time, scenarios, variances, etc}
 }
 \value{
-one element character vector containing SVG graphic statements. svg_string with appended legend.
+object of class tidychart with a character vector containing SVG elements
 }
 \description{
-Add IBCS complient legend
+Add IBCS compliant legend.
 }
 \examples{
 df <- data.frame(x = 2010:2015, sales = rnorm(6,10, 2))
@@ -29,7 +29,6 @@ column_chart(df, df$x, 'sales') \%>\%
   add_title(line1 = 'Department of Big Computers',
     line2_measure = "Sales",
     line2_rest = "in mEUR",
-    line3 = "2010..2015") \%>\%
-  SVGrenderer()
+    line3 = "2010..2015")
 
 }

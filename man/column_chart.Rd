@@ -2,7 +2,7 @@
 % Please edit documentation in R/column_chart_functions.R
 \name{column_chart}
 \alias{column_chart}
-\title{Generate basic column chart. If more than one series is supplied, stacked column plot is generated}
+\title{Generate basic column chart.}
 \usage{
 column_chart(
   data,
@@ -27,10 +27,10 @@ column_chart(
 \item{interval}{intervals on x axis. The width of the bars depends on this parameter}
 }
 \value{
-SVG string containing chart
+object of class tidychart with a character vector containing SVG elements
 }
 \description{
-Generate basic column chart. If more than one series is supplied, stacked column plot is generated
+If more than one series is supplied, stacked column plot is generated.
 }
 \examples{
 # prepare some data frame
@@ -44,6 +44,6 @@ svg2 <- column_chart(df, x = df$x, series = c('y', 'z'))
 
 
 # show the plot
-svg1 \%>\% SVGrenderer()
+svg1
 
 }

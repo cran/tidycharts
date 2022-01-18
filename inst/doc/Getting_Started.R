@@ -16,95 +16,108 @@ library(tidycharts)
 ## ----data---------------------------------------------------------------------
 data_barchart <- data.frame(
   dep = c('Services', 'Production', 'Marketing', 'Purchasing'),
-  profit = c(12, 15, 2, -3),
+  profit = c(17, 15, 2, -3),
   operational = c(9, 7, 1.5, -0.4),
-  property = c(2, 4, 0.5, -0.6),
-  bonus = c(1, 4, 0, -2),
+  property = c(4, 4, 0.5, -0.6),
+  bonus = c(4, 4, 0, -2),
   prev_year = c(10, 16, 4, -1),
   plan = c(11, 13, 2, -2.5)
 )
 
 ## ----base-barchart------------------------------------------------------------
-
-bar_chart(data = data_barchart, cat = data_barchart$dep, series = 'profit') %>% 
-  SVGrenderer()
-
+bar_chart(data = data_barchart, cat = 'dep', series = 'profit')
 
 ## ----barchart-title-----------------------------------------------------------
-bar_chart(data = data_barchart, cat = data_barchart$dep, series = 'profit') %>% 
-  add_title('The company XYZ', 'Profit', 'in mEUR', 'by departments, 2020') %>% 
-  SVGrenderer()
+bar_chart(data = data_barchart, cat = 'dep', series = 'profit') %>% 
+  add_title('The company XYZ', 'Profit', 'in mEUR', 'by departments, 2020')
 
 ## ----barchart-stacked---------------------------------------------------------
-bar_chart(data = data_barchart, cat = data_barchart$dep, 
-              series = c('operational', 'property', 'bonus')) %>%  
-  add_title('The company XYZ', 'Profit', 'in mEUR', 'by departments, 2020') %>% 
-  SVGrenderer()
+bar_chart(data = data_barchart, cat = 'dep', 
+          series = c('operational', 'property', 'bonus'),
+          series_labels = c('op', 'prop', 'bon')) %>%  
+  add_title('The company XYZ', 'Profit', 'in mEUR',
+            'by departments and profit type, 2020')
 
 ## ----barchart-normalized------------------------------------------------------
-bar_chart_normalized(data = data_barchart, cat = data_barchart$dep,
-                         series = c('operational', 'property', 'bonus')) %>% 
-  SVGrenderer()
+bar_chart_normalized(data = data_barchart, cat = 'dep',
+                     series = c('operational', 'property', 'bonus'),
+                     series_labels = c('op', 'porp', 'bon')) %>% 
+  add_title('The company XYZ', 'Profit', 'in mEUR', 'normalized in department')
 
 ## ----barchart-index-----------------------------------------------------------
 bar_chart_reference(data = data_barchart,
-                    cat = data_barchart$dep, series = 'profit', 
-                    ref_val = 10, ref_label = 'PY best result') %>% 
-  SVGrenderer()
+                    cat = 'dep', series = 'profit', 
+                    ref_val = 10, ref_label = 'PY best result')  %>% 
+  add_title('The company XYZ', 'Profit', 'in mEUR', 
+            'with reference value of 10 mEUR')
 
 ## ----barchart-grouped---------------------------------------------------------
 
-styles <- data.frame(profit = rep('actual', 4),
-                     plan = rep('plan', 4),
-                     prev_year = rep('previous',4))
+# names of columns in styles data frame are not important, 
+# only order of column is
+styles <- data.frame(style_foreground = rep('actual', 4),
+                     style_background = rep('previous',4),
+                     style_markers = rep('plan', 4))
 
 bar_chart_grouped(data = data_barchart,
-                  cat = data_barchart$dep,
-                  foreground = 'prev_year',
-                  background = 'profit',
+                  cat = 'dep',
+                  foreground = 'profit',
+                  background = 'prev_year',
                   markers = 'plan',
                   series_labels = c('PY', 'AC', 'PL'),
-                  styles = styles) %>% 
-  SVGrenderer()
+                  styles = styles)  %>% 
+  add_title('The company XYZ', 'Profit', 'in mEUR', 
+            'compared to different scenarios')
 
 ## ----barchart-abs-variance----------------------------------------------------
-bar_chart_absolute_variance(cat = data_barchart$dep, 
-                                baseline = data_barchart$plan,
-                                real = data_barchart$profit,
-                                y_title = 'Plan vs. actual',
-                                y_style = 'plan') %>% 
-  SVGrenderer()
+bar_chart_absolute_variance(data = data_barchart,
+                            cat = 'dep', 
+                            baseline = 'plan',
+                            real = 'profit',
+                            y_title = 'Plan vs. actual',
+                            y_style = 'plan') %>% 
+  add_title('The company XYZ', 'Profit variance', 'in mEUR', 
+            'between plan and actual')
 
 ## ----barchart-rel-variance----------------------------------------------------
-bar_chart_relative_variance(cat = data_barchart$dep, 
-                                baseline = data_barchart$plan,
-                                real = data_barchart$profit,
-                                y_title = 'Plan vs. actual',
-                                y_style = 'plan') %>% 
-  SVGrenderer()
-
+bar_chart_relative_variance(data = data_barchart,
+                            cat = 'dep', 
+                            baseline = 'plan',
+                            real = 'profit',
+                            y_title = 'Plan vs. actual',
+                            y_style = 'plan') %>% 
+  add_title('The company XYZ', 'Profit variance', 'in %', 
+            'between plan and actual (plan=100%)')
 
 ## ----scatter-data-------------------------------------------------------------
 scatter_data <- mtcars[c('hp','qsec','cyl', 'wt')]
 
 ## ----scatter------------------------------------------------------------------
-scatter_plot(scatter_data, x = scatter_data$hp, y = scatter_data$qsec, 
-             legend_title = '') %>% SVGrenderer()
-
+scatter_plot(scatter_data, x = 'hp', y = 'qsec', 
+             legend_title = '', 
+             x_names = c('Horsepower', 'in hp'),
+             y_names = c('1/4 mile time', 'in s')) %>% 
+  add_title('The mtcars dataset', '', '', '')
 
 ## ----scatter2-----------------------------------------------------------------
-scatter_plot(scatter_data, x = scatter_data$hp,
-             y = scatter_data$qsec, 
-             cat = scatter_data$cyl, 
-             legend_title = 'No. cylinder') %>% SVGrenderer()
+scatter_plot(scatter_data, x = 'hp',
+             y = 'qsec', 
+             cat = 'cyl', 
+             legend_title = 'No. cylinder', 
+             x_names = c('Horsepower', 'in hp'),
+             y_names = c('1/4 mile time', 'in s')) %>% 
+  add_title('The mtcars dataset', '', '', '') 
 
 
 ## ----bubble-------------------------------------------------------------------
-scatter_plot(scatter_data, x = scatter_data$hp,
-             y = scatter_data$qsec, 
-             cat = scatter_data$cyl, 
-             bubble_value = scatter_data$wt,
-             legend_title = 'No. cylinders') %>% SVGrenderer()
+scatter_plot(scatter_data, x = 'hp',
+             y = 'qsec', 
+             cat = 'cyl', 
+             bubble_value = 'wt',
+             legend_title = 'No. cylinders',
+             x_names = c('Horsepower', 'in hp'),
+             y_names = c('1/4 mile time', 'in s')) %>% 
+  add_title('The mtcars dataset', '', '', '')
 
 ## -----------------------------------------------------------------------------
 data_time_series <- data.frame(
@@ -117,7 +130,7 @@ data_time_series <- data.frame(
 ## ----columnchart-basic--------------------------------------------------------
 column_chart(data_time_series, x = 'time', 
              series = c('Poland', 'Germany', 'Slovakia'), interval = 'months') %>% 
-  SVGrenderer()
+  add_title('The company XYZ', 'Profit', 'in mEUR', 'by country, 2020')
 
 ## ----columnchart-waterfall----------------------------------------------------
 data_time_series %>% group_by(time) %>%
@@ -126,7 +139,7 @@ data_time_series %>% group_by(time) %>%
   mutate(Sales = round(cumsum(Sales), 2)) -> df_summarized
 
 column_chart_waterfall(df_summarized, x = 'time', series = 'Sales') %>% 
-  SVGrenderer()
+  add_title('The company XYZ', 'Profit', 'in mEUR', 'cumulative, 2020')
 
 ## ----linechart-basic----------------------------------------------------------
 set.seed(123)
@@ -137,11 +150,11 @@ data_companies <- data.frame(
   Gamma.inc = round(50 + rnorm(11, sd = 5))
 )
 
-line_chart_markers(data_companies, x = data_companies$time,
+line_chart_markers(data_companies, x = 'time',
           series = c('Alpha.inc', 'Beta.inc', 'Gamma.inc'),
           series_labels = c('Alpha.inc', 'Beta.inc', 'Gamma.inc'),
           interval = 'years') %>% 
-  SVGrenderer()
+  add_title('Some companies', 'Market value', 'in mEUR', '2010...2020')
 
 ## ----linechart_dense----------------------------------------------------------
 
@@ -152,6 +165,5 @@ data_dense <- data.frame(
 )
 
 line_chart_dense(data_dense, 'dates', c('Warsaw', 'London')) %>%
-  add_title('Temperature in European Cities', 'Daily mean', 'in deg. C', 'In 2019') %>% 
-  SVGrenderer()
+  add_title('Temperature in European Cities', 'Daily mean', 'in deg. C', 'In 2019')
 

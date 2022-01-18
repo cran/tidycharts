@@ -19,7 +19,7 @@ add_column_bar <-
       column_name <- series[j]
       height <- df[i, column_name] * 200 / max_height
       if (is.null(color)) {
-        colors_ <- get_gray_color_stacked(j)
+        colors_ <- get_color_stacked(j)
       }
       else{
         colors_ <- list(bar_color = color,
@@ -31,7 +31,7 @@ add_column_bar <-
         svg_string = svg_string,
         x = x_pos + bar_width / 4,
         y = x_axis_pos - height - bar_height,
-        height = ceiling(height),
+        height = height,
         width = bar_width,
         color = colors_$bar_color,
         style = style,
@@ -44,7 +44,10 @@ add_column_bar <-
         # height at least 150% of font size and more than one series
         svg_string <- draw_text(
           svg_string = svg_string,
-          text = round(df[i, series[j], 1], digits = 1),
+          text = formatC(
+            round_preserve_sum(as.numeric(df[i, series]),digits = 2)[j],
+            digits=2,
+            format='f'),
           x = x_pos + bar_width * 1.5 / 2,
           y = x_axis_pos - bar_height + (height / 2) + 6,
           text_color = colors_$text_color,
@@ -93,7 +96,7 @@ add_bars <-
 
     # TODO check series lengths and NA there
     n_bars <- length(x)
-    left_margin <- 80
+    left_margin <- get_margins()$left
 
     n_splits = length(series)
     x_axis_pos <- get_x_axis_pos(df[series], max_val)
@@ -166,7 +169,7 @@ add_first_bar <- function(svg_string,
                           bar_width,
                           color = "rgb(166,166,166)",
                           label_color = "black") {
-  left_margin <- 80
+  left_margin <- get_margins()$left
   x_pos <- 50 - bar_width * 1.5 + left_margin
   bar_height <- value / top_value * max_bar_height
   # calculate x labels y position
@@ -239,10 +242,10 @@ add_first_bar <- function(svg_string,
 #' @param series character vector of column names representing series to split bars by it
 #' @param bar_width the width of plotted bar
 #' @param styles vector of styles of the bars
-#' @param pos_color color to be asociated with positive values (in string format)
-#' @param neg_color color to be asociated with negative values (in string format)
+#' @param pos_color color to be associated with positive values (in string format)
+#' @param neg_color color to be associated with negative values (in string format)
 #' @param add_result_bar boolean flag to add result bar as the last bar or not.
-#' @param result_bar_pos flag indicating position of the result bar. 1 - bar offset 1/9 category width right from the last bar. 2 - result bar as completly new bar. If add_result_bar is false, it is ignored.
+#' @param result_bar_pos flag indicating position of the result bar. 1 - bar offset 1/9 category width right from the last bar. 2 - result bar as completely new bar. If add_result_bar is false, it is ignored.
 #' @param positive_prefix how to indicate positive value, ie. "+" or ""(empty string).
 #' @param result_bar_color color of result bar. If add_result_bar is false, it is ignored.
 #' @param result_title title of result bar to be on x axis. If add_result_bar is false, it is ignored.
@@ -272,7 +275,7 @@ add_waterfall_bars <-
     max_bar_height <- 200
     top_value <- max(abs(df[series]))
     prev_level <- ref_value / top_value * max_bar_height
-    left_margin <- 80 + translate_vec[1]
+    left_margin <- get_margins()$left + translate_vec[1]
 
     # calculate x labels y position
     low_value <- min(df[series])
@@ -311,9 +314,9 @@ add_waterfall_bars <-
       )
 
       if (bar_height >= 0) {
-        bar_y <- x_axis_pos - prev_level - bar_height
-        bar_h <- ceiling(bar_height)
-        line_y <- x_axis_pos - prev_level - bar_height
+        bar_y <- ceiling(x_axis_pos - prev_level - bar_height)
+        bar_h <- bar_height
+        line_y <- bar_y - 0.2 # pos - height of line
         label_y <- x_axis_pos - prev_level - bar_height - 4.8
         last_label_y <- label_y
         last_label_x <- x_pos + 0.75 * bar_width
@@ -322,7 +325,7 @@ add_waterfall_bars <-
       } else{
         bar_y <- x_axis_pos - prev_level
         bar_h <- -1 * bar_height
-        line_y <- floor(x_axis_pos - prev_level - bar_height)
+        line_y <- x_axis_pos - prev_level - bar_height
         label_y <- x_axis_pos - prev_level - bar_height + 4.8 + 6
         last_label_y <- label_y - 10.8
         last_label_x <- x_pos + 1.25 * bar_width + 4.8
@@ -440,7 +443,8 @@ add_abs_variance_bars <-
            bar_width,
            x_title,
            x_style) {
-    x_pos <- 80
+    x_pos <- get_margins()$left
+
 
     color <- choose_variance_colors(colors)
     max_val <- max(abs(baseline), abs(real))
@@ -535,7 +539,8 @@ add_relative_variance_pins <-
            styles = NULL) {
     x_axis_pos <- 200
     color <- choose_variance_colors(colors)
-    x_pos <- 0
+    x_pos <- get_margins()$left
+
     values <- real / baseline * 100 - 100
     max_val <- 100
     # add legend on the left of plot
@@ -641,7 +646,7 @@ add_triangles <- function(svg_string,
                           styles = NULL) {
   x_axis_pos <- get_x_axis_pos(df[series], max_val)
   max_height <- ifelse(is.null(max_val), max(df[series]), max_val)
-  left_margin <- 80
+  left_margin <- get_margins()$left
   for (i in 1:length(x)) {
     x_pos <- 1.5 * bar_width * (i - 1) + 4 + 0.25 * bar_width + left_margin
 
@@ -665,7 +670,7 @@ add_triangles <- function(svg_string,
 
 add_legend <- function(svg_string, df, x, series, bar_width) {
   x_axis_pos <- get_x_axis_pos(df[series])
-  left_margin <- 80
+  left_margin <- get_margins()$left
   if (length(series) == 1)
     return(svg_string)
   x_pos = 1.5 * bar_width * length(x) + 4.8 - bar_width / 4 + left_margin
@@ -700,22 +705,25 @@ add_top_values <-
            max_val = NULL,
            ref_value = NULL) {
     x_axis_pos <- get_x_axis_pos(df[series], max_val)
+
     heights <- rowSums(df[series])
     max_height <-
       ifelse(is.null(max_val), max(abs(heights)), max_val)
-    left_margin <- 80
+    left_margin <- get_margins()$left
 
     ref_value <-
       ifelse(is.null(ref_value), max_height, ref_value)
 
     if (is.null(labels)) {
-      labels <- heights
+      round_df <- apply(df[series], MARGIN = 1, round_preserve_sum, digits = 2)
+      if(!is.null(dim(round_df))) labels <- rowSums(t(round_df))
+      else labels <- round_df
     }
     if (length(labels) == 1 && labels == "percent"){
       labels <- paste0(format(heights / ref_value * 100, digits = 3),"%")
     }
     else{
-      labels <- format(labels, digits = 6)
+      labels <-labels
     }
 
     for (i in 1:length(x)) {
@@ -725,7 +733,7 @@ add_top_values <-
       # numeric value label for total bar
       svg_string <- draw_text(
         svg_string = svg_string,
-        text = labels[i],
+        text = formatC(labels[i], digits = 2, format = 'f'),
         x =  x_pos + bar_width * 1.5 / 2,
         y = x_axis_pos - bar_height - sign(bar_height) * 4.8 + ifelse(bar_height > 0, 0, 6)
       )
@@ -758,7 +766,8 @@ get_plot_height <- function(df_num, x_axis_pos = get_x_axis_pos(df_num), max_bar
 
 get_plot_height_abs_var <- function(real, baseline){
   max_bar_height <- 200
-  top_margin <- 75
+  top_margin <- get_margins()$top
+
   x_axis_pos <- get_x_axis_pos_abs_variance(baseline, real)
   max_val <- max(abs(baseline), abs(real))
   variance <- real - baseline
@@ -775,7 +784,7 @@ get_plot_height_abs_var <- function(real, baseline){
 
 get_x_axis_pos <- function(df_num, max_val = NULL){
   max_bar_height <- 200
-  top_margin <- 75
+  top_margin <- get_margins()$top
   min_val <- min(df_num)
   max_val <- max(df_num)
   longest_bar <- max(abs(min_val), abs(max_val))
@@ -789,7 +798,7 @@ get_x_axis_pos <- function(df_num, max_val = NULL){
 
 get_x_axis_pos_abs_variance <- function(baseline, real){
   max_bar_height <- 200
-  top_margin <- 75
+  top_margin <- get_margins()$top
   max_val <- max(abs(baseline), abs(real))
   variance <- real - baseline
   highest_bar <- max(variance) / max_val * max_bar_height
@@ -801,7 +810,9 @@ get_x_axis_pos_abs_variance <- function(baseline, real){
 
 }
 
-#' Generate basic column chart. If more than one series is supplied, stacked column plot is generated
+#' Generate basic column chart.
+#'
+#' If more than one series is supplied, stacked column plot is generated.
 #'
 #' @param data data frame in wide format containing data to be plotted
 #' @param x vector containing labels for x axis or name of column in data with values of x axis labels
@@ -810,7 +821,7 @@ get_x_axis_pos_abs_variance <- function(baseline, real){
 #' @param styles optional vector with styles of bars
 #' @param interval intervals on x axis. The width of the bars depends on this parameter
 #'
-#' @return SVG string containing chart
+#' @inherit bar_chart return
 #' @export
 #'
 #' @importFrom magrittr "%>%"
@@ -827,7 +838,7 @@ get_x_axis_pos_abs_variance <- function(baseline, real){
 #'
 #'
 #' # show the plot
-#' svg1 %>% SVGrenderer()
+#' svg1
 #'
 column_chart <- function(data, x, series = NULL, series_labels = series, styles = NULL, interval = 'months') {
   bar_width <- get_interval_width(interval)$bar_width
@@ -835,18 +846,22 @@ column_chart <- function(data, x, series = NULL, series_labels = series, styles 
   stop_if_pos_neg_values(data, series) # signum of values in one bar is the same for every bar
   x <- get_vector(data, x)
   stop_if_many_categories(x, max_categories = 24)
-  initialize(x_vector = x, bar_width = bar_width, height = get_plot_height(data[series])) %>%
+  svg_string <- initialize(x_vector = x, bar_width = bar_width, height = get_plot_height(data[series])) %>%
     add_bars(data, x, series, bar_width = bar_width, styles) %>%
     add_legend(data, x, series_labels, bar_width = bar_width) %>%
     add_top_values(data, x, series, bar_width = bar_width) %>%
     finalize()
+  class(svg_string) <- c('tidychart', 'character')
+  return(svg_string)
 }
 
 
-#' Generate column chart with normalization. Every column will be rescaled, so columns have the same height.
+#' Generate column chart with normalization.
+#'
+#' Every column will be rescaled, so columns have the same height.
 #'
 #' @inheritParams column_chart
-#' @return SVG string containing chart
+#' @inherit bar_chart return
 #' @export
 #'
 #' @examples
@@ -856,10 +871,8 @@ column_chart <- function(data, x, series = NULL, series_labels = series, styles 
 #'                  z = c(3, 4.5, 2, 1, 4, 2))
 #'
 #' # generate character vector with svg data
-#' svg <- column_chart_normalized(df, x = df$x, series = c('y', 'z'))
+#' column_chart_normalized(df, x = df$x, series = c('y', 'z'))
 #'
-#' # show the plot
-#' svg %>% SVGrenderer()
 column_chart_normalized <- function(data, x, series = NULL, series_labels = series, interval = 'months') {
   bar_width <- get_interval_width(interval)$bar_width
 
@@ -869,11 +882,13 @@ column_chart_normalized <- function(data, x, series = NULL, series_labels = seri
 
   normalized_df <- normalize_rows(data, x, series)
 
-  initialize(x_vector = x, bar_width = bar_width, height = 300) %>%
+  svg_string <- initialize(x_vector = x, bar_width = bar_width, height = 300) %>%
     add_bars(normalized_df, x, series, bar_width = bar_width) %>%
     add_legend(normalized_df, x, series_labels, bar_width = bar_width) %>%
-    draw_ref_line_horizontal(x, bar_width = bar_width, line_y = 75, label = "100") %>%
+    draw_ref_line_horizontal(x, bar_width = bar_width, line_y = get_margins()$top, label = "100") %>%
     finalize()
+  class(svg_string) <- c('tidychart', 'character')
+  return(svg_string)
 }
 
 
@@ -883,7 +898,7 @@ column_chart_normalized <- function(data, x, series = NULL, series_labels = seri
 #' @param ref_value one element numeric vector with referencing value.
 #' @param ref_label name of the referencing value
 #'
-#' @return SVG string containing chart
+#' @inherit bar_chart return
 #' @export
 #'
 #' @examples
@@ -893,13 +908,11 @@ column_chart_normalized <- function(data, x, series = NULL, series_labels = seri
 #'                  z = c(3, 4.5, 2, 1, 4, 2))
 #'
 #' # generate character vector with svg data
-#' svg <- column_chart_reference(df, x = 'x',
-#'                               series = 'y',
-#'                               ref_value = 3,
-#'                               ref_label = 'baseline')
+#' column_chart_reference(df, x = 'x',
+#'                        series = 'y',
+#'                        ref_value = 3,
+#'                        ref_label = 'baseline')
 #'
-#' # show the plot
-#' svg %>% SVGrenderer()
 column_chart_reference <-
   function(data,
            x,
@@ -921,7 +934,7 @@ column_chart_reference <-
     referenced_df <- reference(data, x, series, ref_value)
     index_level <-
       ref_value / max(data[series]) * 200
-    initialize(
+    svg_string <- initialize(
       x_vector = x,
       bar_width = bar_width,
       height = get_plot_height(referenced_df[series], x_axis_pos = x_axis_pos)
@@ -944,19 +957,21 @@ column_chart_reference <-
                      labels = "percent",
                      ref_value = ref_value) %>%
       finalize()
+    class(svg_string) <- c('tidychart', 'character')
+    return(svg_string)
   }
 
 #' Generate column waterfall chart for visualizing contribution.
 #'
 #' @inheritParams column_chart
 #'
-#' @return SVG string containing chart
+#' @inherit bar_chart return
 #' @export
 #'
 #' @examples
 #' df <- data.frame(x = 10:18,
 #'                  y = rnorm(9))
-#' column_chart_waterfall(df, 'x', 'y') %>% SVGrenderer()
+#' column_chart_waterfall(df, 'x', 'y')
 column_chart_waterfall <-
   function(data,
            x,
@@ -970,37 +985,38 @@ column_chart_waterfall <-
     stop_if_many_categories(x, max_categories = 24)
     stop_if_many_series(series, max_series = 1) # maximum 1 series
 
-    initialize(
+    svg_string <- initialize(
       x_vector = x,
       bar_width = bar_width,
       height = get_plot_height(data[series], x_axis_pos = 250)
     ) %>%
       add_waterfall_bars(data, x, series, bar_width, styles) %>%
       finalize()
+    class(svg_string) <- c('tidychart', 'character')
+    return(svg_string)
   }
 
-#' Generate column chart with absolute variance
+#' Generate column chart with absolute variance.
 #'
-#' Visualize variance between two time series (baseline and real) in the same units as the time series. Choose colors parameter accordingly to buisness interpretation of larger/smaller values.
+#' Visualize variance between two time series (baseline and real) in the same units as the time series. Choose colors parameter accordingly to business interpretation of larger/smaller values.
 #'
 #' @param data data frame with columns containing data for x, baseline or real series
 #' @param baseline vector containing base values or name of column in data with base values
 #' @param real vector containing values that will be compared to baseline  or name of column in data with that values
-#' @param colors 1 if green color represents positive values having good buisness impact and red negative values having bad impact or 2 if otherwise
+#' @param colors 1 if green color represents positive values having good business impact and red negative values having bad impact or 2 if otherwise
 #' @param x_title the title of the plot
-#' @param x_style style of the x axis to indicate baseline scenario. The default is 'prevoius'.
+#' @param x_style style of the x axis to indicate baseline scenario. The default is 'previous'.
 #'
 #' @inheritParams column_chart
 #'
-#' @return SVG string containing chart
+#' @inherit bar_chart return
 #' @export
 #'
 #' @examples
 #' x <- month.abb
 #' baseline <- rnorm(12)
 #' real <- c(rnorm(6, mean = -1), rnorm(6, mean = 1))
-#' column_chart_absolute_variance(x, baseline, real, x_title = 'profit') %>%
-#'   SVGrenderer()
+#' column_chart_absolute_variance(x, baseline, real, x_title = 'profit')
 column_chart_absolute_variance <-
   function(x,
            baseline,
@@ -1022,16 +1038,18 @@ column_chart_absolute_variance <-
     stop_if_variance_colors(colors)
     stop_if_many_categories(x, max_categories = 24)
 
-    initialize(
+    svg_string <- initialize(
       x_vector = x,
       bar_width = bar_width,
       height = get_plot_height_abs_var(real, baseline)
     ) %>%
       add_abs_variance_bars(x, baseline, real, colors, bar_width, x_title, x_style) %>%
       finalize()
+    class(svg_string) <- c('tidychart', 'character')
+    return(svg_string)
   }
 
-#' Generate grouped column chart for visualizing up to 3 data series
+#' Generate grouped column chart for visualizing up to 3 data series.
 #'
 #' @param foreground vector or name of column in data representing heights of bars visible in the foreground
 #' @param background vector or name of column in data representing heights of bars visible in the background
@@ -1041,7 +1059,7 @@ column_chart_absolute_variance <-
 #'
 #' @inheritParams column_chart
 #'
-#' @return SVG string containing chart
+#' @inherit bar_chart return
 #' @export
 #'
 #' @examples
@@ -1054,7 +1072,7 @@ column_chart_absolute_variance <-
 #'                      foreground = df$actual,
 #'                      background = df$budget,
 #'                      markers = df$prev_year,
-#'                      series_labels = c('AC', 'BU', 'PY')) %>% SVGrenderer()
+#'                      series_labels = c('AC', 'BU', 'PY'))
 column_chart_grouped <-
   function(x,
            foreground,
@@ -1089,7 +1107,7 @@ column_chart_grouped <-
     }
     max_bar_height <- 200
     df <- normalize_df(df, max_bar_height)
-    initialize(x_vector = x, bar_width = bar_width, height = get_plot_height(df[series_labels])) %>%
+    svg_string <- initialize(x_vector = x, bar_width = bar_width, height = get_plot_height(df[series_labels])) %>%
       add_bars(
         df[, series_labels[2], drop = FALSE],
         x = x,
@@ -1142,23 +1160,24 @@ column_chart_grouped <-
         max_val = max_bar_height
       ) %>%
       finalize()
+    class(svg_string) <- c('tidychart', 'character')
+    return(svg_string)
   }
 
 
-#' Generate column chart with relative variance (in percents)
+#' Generate column chart with relative variance (in percents).
 #'
 #' @inheritParams column_chart_absolute_variance
 #' @param styles optional vector with styles of the pin heads
 #'
-#' @return SVG string containing chart
+#' @inherit bar_chart return
 #' @export
 #'
 #' @examples
 #' x <- month.abb
 #' baseline <- rnorm(12, mean = 1, sd = 0.2)
 #' real <- c(rnorm(6, mean = 0.8, sd = 0.2), rnorm(6, mean = 1.2, sd = 0.2))
-#' column_chart_relative_variance(x, baseline, real, x_title = 'profit %') %>%
-#'   SVGrenderer()
+#' column_chart_relative_variance(x, baseline, real, x_title = 'profit %')
 column_chart_relative_variance <-
   function(x,
            baseline,
@@ -1181,7 +1200,7 @@ column_chart_relative_variance <-
 
     bar_width <- get_interval_width(interval)$bar_width
     translation_vec = c(str_width(x_title), 0)
-    initialize(x_vector = x,
+    svg_string <- initialize(x_vector = x,
                bar_width = bar_width,
                height = 300) %>%
       add_relative_variance_pins(
@@ -1196,23 +1215,24 @@ column_chart_relative_variance <-
         styles = styles
       ) %>%
       finalize()
+    class(svg_string) <- c('tidychart', 'character')
+    return(svg_string)
   }
 
 
-#' Generate column waterfall chart with absolute variance
+#' Generate column waterfall chart with absolute variance.
 #'
 #' @inheritParams column_chart_absolute_variance
 #' @param result_title title for the result bar
 #'
-#' @return SVG string containing chart
+#' @inherit bar_chart return
 #' @export
 #'
 #' @examples
 #' x <- month.abb
 #' baseline <- rnorm(12)
 #' real <- c(rnorm(6, mean = -1), rnorm(6, mean = 1))
-#' column_chart_waterfall_variance(x, baseline, real, result_title = 'year profit') %>%
-#'   SVGrenderer()
+#' column_chart_waterfall_variance(x, baseline, real, result_title = 'year profit')
 column_chart_waterfall_variance <-
   function(x, baseline, real, colors = 1, data = NULL, result_title, interval = 'months') {
 
@@ -1228,7 +1248,7 @@ column_chart_waterfall_variance <-
     difference <- real - baseline
     df <- data.frame("series" = difference)
 
-    initialize(x_vector = x, bar_width = bar_width, height = get_plot_height(df)) %>%
+    svg_string <- initialize(x_vector = x, bar_width = bar_width, height = get_plot_height(df)) %>%
       add_first_bar(
         x[1],
         df[1, 'series'],
@@ -1253,6 +1273,6 @@ column_chart_waterfall_variance <-
         translate_vec = c(50,0)
       ) %>%
       finalize()
+    class(svg_string) <- c('tidychart', 'character')
+    return(svg_string)
   }
-
-

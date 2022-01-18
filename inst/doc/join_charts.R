@@ -40,8 +40,7 @@ join_charts(
                                 y_title = 'Plan vs. actual',
                                 y_style = 'plan'),
   nrows = 1,
-  ncols = 3
-) %>% SVGrenderer()
+  ncols = 3)
 
 ## ----mtcars-------------------------------------------------------------------
 head(mtcars)
@@ -56,7 +55,5 @@ facet_chart(data = mtcars,
             cat = mtcars$gear,
             legend_title = '',
             x_names = c('1/4 mile time', 'is s'),
-            y_names = c('Horsepower', '')) %>% 
-  SVGrenderer()
-
+            y_names = c('Horsepower', '')) 
 

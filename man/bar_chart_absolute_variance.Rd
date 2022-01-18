@@ -2,38 +2,38 @@
 % Please edit documentation in R/bar_chart.R
 \name{bar_chart_absolute_variance}
 \alias{bar_chart_absolute_variance}
-\title{Generate bar chart with absolute variance}
+\title{Generate bar chart with absolute variance.}
 \usage{
 bar_chart_absolute_variance(
+  data = NULL,
   cat,
   baseline,
   real,
   colors = 1,
-  data = NULL,
   y_title,
   y_style = "previous"
 )
 }
 \arguments{
+\item{data}{data frame with columns containing data for x, baseline or real series}
+
 \item{cat}{vector containing category names of values}
 
 \item{baseline}{vector containing base values or name of column in data with base values}
 
 \item{real}{vector containing values that will be compared to baseline  or name of column in data with that values}
 
-\item{colors}{1 if green color represents positive values having good buisness impact and red negative values having bad impact or 2 if otherwise}
-
-\item{data}{data frame with columns containing data for x, baseline or real series}
+\item{colors}{1 if green color represents positive values having good business impact and red negative values having bad impact or 2 if otherwise}
 
 \item{y_title}{title of the series values}
 
 \item{y_style}{style of y axis to indicate baseline scenario}
 }
 \value{
-SVG string containing chart
+object of class tidychart with a character vector containing SVG elements
 }
 \description{
-Visualize variance between baseline and real in absolute units. Choose colors parameter accordingly to buisness interpretation of larger/smaller values.
+Visualize variance between baseline and real in absolute units. Choose colors parameter accordingly to business interpretation of larger/smaller values.
 }
 \examples{
 
@@ -46,6 +46,5 @@ bar_chart_absolute_variance(
   cat = cat,
   baseline = baseline,
   real = real,
-  y_title = 'a title') \%>\%
- SVGrenderer() # show the plot
+  y_title = 'a title')
 }

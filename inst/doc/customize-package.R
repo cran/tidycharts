@@ -15,7 +15,7 @@ data_time_series <- data.frame(
   Slovakia = round(2 + 2 * cos(1:8), 2)
 )
 column_chart(data_time_series, x = 'time', 
-             series = c('Poland', 'Germany', 'Slovakia'), interval = 'months') %>% SVGrenderer()
+             series = c('Poland', 'Germany', 'Slovakia'), interval = 'months')
 
 ## ----colors-------------------------------------------------------------------
 color_df <- data.frame(
@@ -38,12 +38,12 @@ set_colors(color_df)
 
 ## ----customized-chart---------------------------------------------------------
 column_chart(data_time_series, x = 'time', 
-             series = c('Poland', 'Germany', 'Slovakia'), interval = 'months') %>% SVGrenderer()
+             series = c('Poland', 'Germany', 'Slovakia'), interval = 'months')
 
 ## ----styles-default-----------------------------------------------------------
 column_chart(data_time_series, x = 'time', 
              series = 'Poland', interval = 'months',
-             styles = c(rep('actual',7), 'plan')) %>% SVGrenderer()
+             styles = c(rep('actual',7), 'plan'))
 
 ## ----user-styles--------------------------------------------------------------
 styles_df <- rbind(
@@ -56,7 +56,7 @@ set_styles(styles_df)
 ## ----styles-custom------------------------------------------------------------
 column_chart(data_time_series, x = 'time', 
              series = 'Poland', interval = 'months',
-             styles = c(rep('actual',7), 'fictual')) %>% SVGrenderer()
+             styles = c(rep('actual',7), 'fictual'))
 
 ## -----------------------------------------------------------------------------
 restore_defaults()

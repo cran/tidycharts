@@ -2,7 +2,7 @@
 % Please edit documentation in R/column_chart_functions.R
 \name{column_chart_grouped}
 \alias{column_chart_grouped}
-\title{Generate grouped column chart for visualizing up to 3 data series}
+\title{Generate grouped column chart for visualizing up to 3 data series.}
 \usage{
 column_chart_grouped(
   x,
@@ -33,10 +33,10 @@ column_chart_grouped(
 \item{interval}{intervals on x axis. The width of the bars depends on this parameter}
 }
 \value{
-SVG string containing chart
+object of class tidychart with a character vector containing SVG elements
 }
 \description{
-Generate grouped column chart for visualizing up to 3 data series
+Generate grouped column chart for visualizing up to 3 data series.
 }
 \examples{
 df <- data.frame(x = month.abb[7:12],
@@ -48,5 +48,5 @@ column_chart_grouped(x = df$x,
                      foreground = df$actual,
                      background = df$budget,
                      markers = df$prev_year,
-                     series_labels = c('AC', 'BU', 'PY')) \%>\% SVGrenderer()
+                     series_labels = c('AC', 'BU', 'PY'))
 }

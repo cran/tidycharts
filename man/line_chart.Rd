@@ -2,7 +2,7 @@
 % Please edit documentation in R/line_chart.R
 \name{line_chart}
 \alias{line_chart}
-\title{Generates a line plot with markers on chosen points. Allows only one point per time interval. To create a plot with many points within one time interval try line_plot_with_many_points_complex().}
+\title{Generates a line plot with markers on chosen points. Allows only one point per time interval. To create a plot with many points within one time interval try `line_chart_dense`.}
 \usage{
 line_chart(
   data,
@@ -17,7 +17,7 @@ line_chart(
 \arguments{
 \item{data}{data frame containing data to be plotted}
 
-\item{x}{vector cointaining time interwals of the values}
+\item{x}{vector containing time intervals of the values}
 
 \item{series}{vector containing names of columns in data with values to plot}
 
@@ -30,10 +30,10 @@ line_chart(
 \item{interval}{intervals on x axis. The width of the bars depends on this parameter}
 }
 \value{
-SVG string containing chart
+object of class tidychart with a character vector containing SVG elements
 }
 \description{
-Generates a line plot with markers on chosen points. Allows only one point per time interval. To create a plot with many points within one time interval try line_plot_with_many_points_complex().
+Generates a line plot with markers on chosen points. Allows only one point per time interval. To create a plot with many points within one time interval try `line_chart_dense`.
 }
 \examples{
 
@@ -59,6 +59,6 @@ line_chart  <- line_chart(
   interval = "years")
 
 #showing the plot
-line_chart \%>\% SVGrenderer
+line_chart
 
 }
